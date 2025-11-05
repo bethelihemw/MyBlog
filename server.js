@@ -1,4 +1,5 @@
 require("dotenv").config()
+const cookieParser = require("cookie-parser")
 const jwt = require("jsonwebtoken")
 const bcrypt = require("bcrypt")
 const express = require('express')
@@ -26,12 +27,26 @@ const app = express()
 app.set("view engine", "ejs")
 app.use(express.urlencoded({extended:false}))
 app.use(express.static("public"))
+app.use(cookieParser())
 
 app.use(function(req, res, next){
     res.locals.errors =[]
+    // try to decode incoming cokie
+    try{
+        const decoded = jwt.verify(req.cookies.ourSimpleApp , process.env.JWTSECRET)
+        req.user =decoded
+    }catch(error){
+        req.user = false
+    }
+
+    res.locals.user = req.user
+    console.log(req.user)
     next()
 })
 app.get("/", (req, res) =>{
+    if(req.user){
+        return res.render("dashboard")
+    }
     res.render("home")
 })
 
@@ -40,6 +55,52 @@ app.get("/", (req, res) =>{
 app.get("/login", (req, res) =>{
     res.render("login")
 })
+
+
+app.get("/logout", (req, res) =>{
+    res.clearCookie("ourSimpleApp")
+    res.redirect("/")
+})
+
+app.post("/login", (req,res)=>{
+    let errors =[]
+    if (typeof req.body.username !== "string") req.body.username =""
+    if (typeof req.body.password !== "string") req.body.password =""
+    if(req.body.username.trim() == "" ) errors =["invalid username or password"]
+    if(req.body.password == "" ) errors =["invalid username or password"]
+
+    if(errors){
+        return res.render("login", {errors})
+    }
+
+    const userInQuestionStatement = db.prepare("SELECT * FROM users WHERE USERNAME = ?")
+    const userInQuestion = userInQuestionStatement.get(req.body.username)
+
+    if (!userInQuestion){
+        errors = ["invalid username or password"]
+        return res.render("login", {errors})
+    }
+
+    const matchOrNot = bcrypt.compareSync(req.body.password, userInQuestion.password)
+    if(!matchOrNot){
+        errors = ["invalid username or password"]
+        return res.render("login", {errors})
+    }
+    const ourTokenValue =jwt.sign(
+        {exp: Math.floor(Date.now()/ 1000) +60 * 60 * 24 , skyColor: "blue", userid: ourUser.id, username: ourUser.username}, process.env.JWTSECRET)
+    res.cookie("ourSimpleApp", ourTokenValue, {
+        httpOnly: true,
+        secure: true,
+        sameSite: "strict",
+        maxAge: 1000 * 60 * 60 * 24
+    })
+
+}
+
+    
+
+)
+
 
 app.post("/register", (req, res) =>{
     console.log(req.body)
@@ -81,7 +142,7 @@ app.post("/register", (req, res) =>{
         sameSite: "strict",
         maxAge: 1000 * 60 * 60 * 24
     })
-    res.send("thanks for filling the form")
+    res.redirect("/")
 
 })
 
