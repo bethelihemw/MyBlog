@@ -56,7 +56,9 @@ app.use(function(req, res, next){
 })
 app.get("/", (req, res) =>{
     if(req.user){
-        return res.render("dashboard")
+        const postsStatement = db.prepare("SELECT * FROM posts WHERE authorid = ?")
+        const posts = postsStatement.all(req.user.userid)
+        return res.render("dashboard", {posts})
     }
     res.render("home")
 })
@@ -144,6 +146,55 @@ function sharedPostValidation(req){
     return errors
 }
 
+app.get("/edit-post/:id", (req,res) => {
+    //try to look th epost in quetion
+
+    const  statement = db.prepare("SELECT * FROM posts WHERE id =?" )
+    const post = statement.get(req.params.id)
+
+    
+    if(!post){
+        return res.redirect("/")
+    }
+
+    //if not author redirect to the home page
+
+    if(post.authorid !== req.user.userid){
+        return res.redirect("/")
+    }
+    //other wise render the the edit template
+    res.render("edit-post", {post})
+
+})
+
+app.post("/edit-post/:id", (req,res) =>{
+    const  statement = db.prepare("SELECT * FROM posts WHERE id =?" )
+    const post = statement.get(req.params.id)
+
+    
+    if(!post){
+        return res.redirect("/")
+    }
+
+    //if not author redirect to the home page
+
+    if(post.authorid !== req.user.userid){
+        return res.redirect("/")
+    }
+
+    const errors = sharedPostValidation(req)
+
+    if(errors.length){
+        return res.render("edit-post", {errors})
+    }
+
+    //if successfull
+
+    const updateStatement = db.prepare( "UPDATE posts SET  title =?, body =? WHERE id =? ")
+    updateStatement.run(req.body.title, req.body.body, req.params.id)
+
+    res.redirect(`/posts/${req.params.id}`)
+})
 app.get("/post/:id" , (req, res) =>{
 
     const statement  = db.prepare("SELECT posts.* , users.username FROM posts INNER JOIN users ON posts.authorid = users.id WHERE posts.id = ?")

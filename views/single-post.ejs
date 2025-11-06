@@ -18,6 +18,12 @@
             <%= post.body %>
         </div>
        </article>
+
+       <a href="/edit-post/<%= post.id%>" class="button"> Edit post</a>
+
+       <form style="display: inline;" action="/delete-post/<%= post.id%>"  method="POST">
+        <button>Delete Post</button>
+       </form>
     </main>
     <%- include('includes/footer')%>
 </body>
