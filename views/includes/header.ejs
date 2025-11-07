@@ -1,11 +1,11 @@
-<header>
-        <h2><a href="/">Our Wonderfull App</a></h2>
-        <nav>
+<header class="site-header" id="site-header">
+        <h2 class="site-logo"><a class="site-logo__link" href="/">Our Wonderfull App</a></h2>
+        <nav class="site-nav" id="site-nav">
             <% if (user){ %>
-                <a href="/create-post">Create Post</a>
-                <a href="/logout">Log Out</a>
+                <a class="nav-link nav-link--primary" href="/create-post">Create Post</a>
+                <a class="nav-link" href="/logout">Log Out</a>
             <%} else{%> 
-                <a href="/login">Login</a>
+                <a class="nav-link" href="/login">Login</a>
                 <%}%>
             
         </nav>

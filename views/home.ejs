@@ -2,23 +2,23 @@
 <html lang="en">
 <%- include('includes/head')%>
 
-<body>
+<body class="page home-page">
     <%- include('includes/header')%>
-    <main>
-        <form action="/register" method="post">  
-            <% errors.forEach(error => { %> <p className="notice"><%= error %></p> <% }) %>
+    <main class="container">
+        <form class="auth-form" id="register-form" action="/register" method="post">  
+            <% errors.forEach(error => { %> <p className="notice error"><%= error %></p> <% }) %>
             
-        <fieldset>
-            <legend>Create an Account</legend>
-            <label for="username"><small>Username</small></label>
-            <input type="text" id="username" name="username" autocomplete="">
+        <fieldset class="card">
+            <legend class="card__title">Create an Account</legend>
+            <label class="form-label" for="username"><small>Username</small></label>
+            <input class="input" type="text" id="username" name="username" autocomplete="">
 
 
-            <label for="password"><small>Password</small></label>
-            <input type="password" id="password" name="password" autocomplete="">
+            <label class="form-label" for="password"><small>Password</small></label>
+            <input class="input" type="password" id="password" name="password" autocomplete="">
 
             <br>
-            <button>Sign Up</button>
+            <button class="button button--primary">Sign Up</button>
         </fieldset>
         </form>
     </main>

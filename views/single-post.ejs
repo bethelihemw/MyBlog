@@ -1,29 +1,29 @@
 <!DOCTYPE html>
 <html lang="en">
 <%- include('includes/head')%>
-<body>
+<body class="page single-post-page">
     <header>
         <h2><a href="/">Our Wonderfull App</a></h2>
         <nav>
             <a href="/login">Login</a>
         </nav>
     </header>
-    <main>
+    <main class="container">
         
-       <h1> <%= post.title %></h1>
+       <h1 class="post-title"> <%= post.title %></h1>
 
-       <article>
-        <small>created by <%= post.username %> on <%= new Date(post.createdDate).getMonth() + 1 %> /<%= new Date(post.createdDate).getDate() %> / <%= new Date(post.createdDate).getFullYear() %></small>
-        <div>
+       <article class="post">
+        <small class="post-meta">created by <%= post.username %> on <%= new Date(post.createdDate).getMonth() + 1 %> /<%= new Date(post.createdDate).getDate() %> / <%= new Date(post.createdDate).getFullYear() %></small>
+        <div class="post-body">
             <%- filterUserHTML(post.body) %>
         </div>
        </article>
 
        <% if (isAuthor){ %>
-        <a href="/edit-post/<%= post.id%>" class="button"> Edit post</a>
+        <a href="/edit-post/<%= post.id%>" class="button button--secondary"> Edit post</a>
 
        <form style="display: inline;" action="/delete-post/<%= post.id%>"  method="POST">
-        <button>Delete Post</button>
+        <button class="button button--danger">Delete Post</button>
        </form>
       
        <%} %>

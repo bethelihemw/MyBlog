@@ -1,28 +1,28 @@
 <!DOCTYPE html>
 <html lang="en">
 <%- include('includes/head')%>
-<body>
+<body class="page create-post-page">
     <header>
         <h2><a href="/">Our Wonderfull App</a></h2>
         
     </header>
-    <main>
-        <form action="/create-post" method="POST">  
+    <main class="container">
+        <form class="post-form" id="create-post-form" action="/create-post" method="POST">  
             <% errors.forEach(error => 
-            { %> <p className="notice"><%= error %></p> <% 
+            { %> <p className="notice error"><%= error %></p> <% 
         }) %>
             
-        <fieldset>
-            <legend>Create new post</legend>
-            <label for="title"><small>Title</small></label>
-            <input type="text" id="title" name="title" autocomplete="">
+        <fieldset class="card">
+            <legend class="card__title">Create new post</legend>
+            <label class="form-label" for="title"><small>Title</small></label>
+            <input class="input" type="text" id="title" name="title" autocomplete="">
 
 
-            <label for="body"><small>Content</small></label>
-            <textarea name="body" id="body"> </textarea>
+            <label class="form-label" for="body"><small>Content</small></label>
+            <textarea class="textarea" name="body" id="body"> </textarea>
 
             <br>
-            <button>Create New Post</button>
+            <button class="button button--primary">Create New Post</button>
         </fieldset>
         </form>
        
