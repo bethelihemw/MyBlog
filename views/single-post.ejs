@@ -15,15 +15,19 @@
        <article>
         <small>created by <%= post.username %> on <%= new Date(post.createdDate).getMonth() + 1 %> /<%= new Date(post.createdDate).getDate() %> / <%= new Date(post.createdDate).getFullYear() %></small>
         <div>
-            <%= post.body %>
+            <%- filterUserHTML(post.body) %>
         </div>
        </article>
 
-       <a href="/edit-post/<%= post.id%>" class="button"> Edit post</a>
+       <% if (isAuthor){ %>
+        <a href="/edit-post/<%= post.id%>" class="button"> Edit post</a>
 
        <form style="display: inline;" action="/delete-post/<%= post.id%>"  method="POST">
         <button>Delete Post</button>
        </form>
+      
+       <%} %>
+       
     </main>
     <%- include('includes/footer')%>
 </body>

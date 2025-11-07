@@ -4,7 +4,12 @@
 <body>
     <%- include('includes/header')%>
     <main>
-        <h2>Wellcome to Your Dashboard</h2>
+        <% if(posts.length ==0 ){%> 
+        <h4> Wellcome <%= user.username %> , you have no post</h4>
+        <% } else {  %>
+            <h4>Wellcome <%= user.username %> , here are your posts</h4>
+         <%}  %>
+
         <ul>
             <% posts.forEach(post =>{ %>
                 <li><a href="/post/<%= post.id %>"> 

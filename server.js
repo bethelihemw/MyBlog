@@ -1,4 +1,5 @@
 require("dotenv").config()
+const marked = require("marked")
 const sanitizeHTML = require("sanitize-html") // will strip anything that is  not plain text
 const cookieParser = require("cookie-parser")
 const jwt = require("jsonwebtoken")
@@ -41,6 +42,13 @@ app.use(express.static("public"))
 app.use(cookieParser())
 
 app.use(function(req, res, next){
+    //make our marked available
+    res.locals.filterUserHTML = function(content){
+        return sanitizeHTML(marked.parse(content),{
+            allowedTags: ["p", "br", "ul", "li", "ol", "strong", "bold", "i", "em", "h1", "h2", "h3", "h4", "h5", "h6"],
+            allowedAttributes: {}
+        })
+    }
     res.locals.errors =[]
     // try to decode incoming cokie
     try{
@@ -56,7 +64,7 @@ app.use(function(req, res, next){
 })
 app.get("/", (req, res) =>{
     if(req.user){
-        const postsStatement = db.prepare("SELECT * FROM posts WHERE authorid = ?")
+        const postsStatement = db.prepare("SELECT * FROM posts WHERE authorid = ? ORDER BY createdDate DESC")
         const posts = postsStatement.all(req.user.userid)
         return res.render("dashboard", {posts})
     }
@@ -146,7 +154,7 @@ function sharedPostValidation(req){
     return errors
 }
 
-app.get("/edit-post/:id", (req,res) => {
+app.get("/edit-post/:id",  mustBeLoggedIn,(req,res) => {
     //try to look th epost in quetion
 
     const  statement = db.prepare("SELECT * FROM posts WHERE id =?" )
@@ -162,12 +170,14 @@ app.get("/edit-post/:id", (req,res) => {
     if(post.authorid !== req.user.userid){
         return res.redirect("/")
     }
+    
     //other wise render the the edit template
     res.render("edit-post", {post})
 
+    
 })
 
-app.post("/edit-post/:id", (req,res) =>{
+app.post("/edit-post/:id", mustBeLoggedIn,(req,res) =>{
     const  statement = db.prepare("SELECT * FROM posts WHERE id =?" )
     const post = statement.get(req.params.id)
 
@@ -193,7 +203,30 @@ app.post("/edit-post/:id", (req,res) =>{
     const updateStatement = db.prepare( "UPDATE posts SET  title =?, body =? WHERE id =? ")
     updateStatement.run(req.body.title, req.body.body, req.params.id)
 
-    res.redirect(`/posts/${req.params.id}`)
+    res.redirect(`/post/${req.params.id}`)
+})
+
+app.post("/delete-post/:id" ,  mustBeLoggedIn,(req,res) =>{
+
+    const  statement = db.prepare("SELECT * FROM posts WHERE id =?" )
+    const post = statement.get(req.params.id)
+
+    
+    if(!post){
+        return res.redirect("/")
+    }
+
+    //if not author redirect to the home page
+
+    if(post.authorid !== req.user.userid){
+        return res.redirect("/")
+    }
+
+    const deleteStatement = db.prepare("DELETE FROM posts WHERE id =?")
+    deleteStatement.run(req.params.id)
+
+    res.redirect("/")
+
 })
 app.get("/post/:id" , (req, res) =>{
 
@@ -204,7 +237,8 @@ app.get("/post/:id" , (req, res) =>{
         return res.redirect("/")
     }
 
-    res.render("single-post", {post})
+    const isAuthor = post.authorid === req.user.userid
+    res.render("single-post", {post, isAuthor})
 })
  
 
