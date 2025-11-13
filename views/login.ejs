@@ -2,27 +2,27 @@
 <html lang="en">
 <%- include('includes/head')%>
 <body class="page login-page">
-    <header>
-        <!-- <h2><a href="/">Our Wonderfull App</a></h2>
-        <nav>
-            <a href="/login">Login</a>
-        </nav> -->
-    </header>
+    <%- include('includes/headlogin')%>
     <main class="container">
         <form class="auth-form" id="login-form" action="/login" method="POST">  
             <% errors.forEach(error => { %> <p className="notice error"><%= error %></p> <% }) %>
             
         <fieldset class="card">
-            <legend class="card__title">login to your Account</legend>
-            <label class="form-label" for="username"><small>Username</small></label>
-            <input class="input" type="text" id="username" name="username" autocomplete="">
 
+            <legend class="card__title">Login to your Account</legend>
 
-            <label class="form-label" for="password"><small>Password</small></label>
-            <input class="input" type="password" id="password" name="password" autocomplete="">
+            <div>
+                <label class="form-label" for="username"><small>Username</small></label>
+                <input class="input" type="text" id="username" name="username" autocomplete="">
+            </div>
+            <div>
+                <label class="form-label" for="password"><small>Password</small></label>
+                <input class="input" type="password" id="password" name="password" autocomplete="">
+            </div>
 
+            
             <!-- <br> -->
-            <button class="button button--primary">login Up</button>
+            <button class="button button--primary">Login</button>
         </fieldset>
         </form>
        
@@ -30,3 +30,4 @@
     <!-- <%- include('includes/footer')%> -->
 </body>
 </html>
+

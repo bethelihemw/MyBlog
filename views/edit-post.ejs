@@ -2,10 +2,11 @@
 <html lang="en">
 <%- include('includes/head')%>
 <body class="page edit-post-page">
-    <header>
-        <h2><a href="/">Our Wonderfull App</a></h2>
+    <!-- <header>
+        <h2 class="hedernav"><a href="/">Our Wonderfull App</a></h2>
         
-    </header>
+    </header> -->
+     <%- include('includes/header')%>
     <main class="container">
         <form class="post-form" id="edit-post-form" action="/edit-post/<%= post.id %>" method="POST">  
             <% errors.forEach(error => 
@@ -14,15 +15,19 @@
             
         <fieldset class="card">
             <legend class="card__title">Editing the post</legend>
-            <label class="form-label" for="title"><small>Title</small></label>
-            <input class="input" type="text" value="<%= post.title %>" id="title" name="title" autocomplete="">
+            <div class="titles">
+                <label class="form-label" for="title"><small>Title</small></label>
+                <input class="input" type="text" value="<%= post.title %>" id="title" name="title" autocomplete="">
 
+            </div>
+            <div class="bodies">
+                <label class="form-label" for="body"><small>Content</small></label>
+                <textarea class="textarea" name="body" id="body"> <%= post.body %> </textarea>
+            </div>
 
-            <label class="form-label" for="body"><small>Content</small></label>
-            <textarea class="textarea" name="body" id="body"> <%= post.body %> </textarea>
-
+            
             <br>
-            <button class="button button--primary">Change Post</button>
+            <button class="button button--primary">Save Change</button>
         </fieldset>
         </form>
        
